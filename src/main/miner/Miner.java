@@ -1,6 +1,6 @@
 import lombok.Getter;
 
-import java.util.Random;
+import java.util.UUID;
 
 @Getter
 public class Miner implements Runnable {
@@ -18,12 +18,10 @@ public class Miner implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < blockNumber; i++) {
-            String blockName = name +"-" +new Random().nextInt();
-            Block block = new Block(blockName, blockChain.getPreviousBlockHash());
-
-            System.out.println(String.format(TextConstants.MINER_ADDING_NEW_BLOCK_S,name, block.getData()));
-
-            blockChain.addBlock(block,this);
+            String blockName = name +"-" + UUID.randomUUID().toString().substring(0,4);
+            Block newBlock = new Block(blockName, blockChain.getPreviousBlockHash());
+            newBlock.mineBlock(blockChain.getDifficultyMineBlock());
+            blockChain.addBlock(newBlock,this);
         }
     }
 

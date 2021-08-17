@@ -34,7 +34,7 @@ public class Block {
      * @param difficulty
      * @return
      */
-    public String proofOFwork(int difficulty) {
+    public String mineBlock(int difficulty) {
         String prefixString = new String(new char[difficulty]).replace('\0', '0');
         while (!hash.substring(0, difficulty).equals(prefixString)) {
             nounce++;
