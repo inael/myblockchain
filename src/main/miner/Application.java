@@ -18,8 +18,6 @@ public class Application {
         System.out.println(TextConstants.ENTER_THE_NUMBER_OF_THREADS);
         Integer threadNumber = new Integer(sc.next());
 
-        System.out.println(TextConstants.ENTER_THE_NUMBER_OF_MINERS);
-        Integer minerNumber = new Integer(sc.next());
 
         System.out.println(TextConstants.ENTER_THE_NUMBER_OF_BLOCKS_PER_MINER);
         Integer blockNumber = new Integer(sc.next());
@@ -29,23 +27,26 @@ public class Application {
 
         ExecutorService executorService = Executors.newFixedThreadPool(threadNumber);
         BlockChain blockChain = new BlockChain(difficultyMineBlock);
+        blockChain.addGenesisBlock();
+
+
 
         long start = System.currentTimeMillis();
 
-        IntStream.range(0, minerNumber).forEach(i -> {
+        IntStream.range(0, threadNumber).forEach(i -> {
             Miner miner = new Miner(i, blockChain, blockNumber);
             executorService.submit(miner);
         });
 
-        System.out.println(String.format(TextConstants.BLOCKCHAIN_IS_VALID, SecurityUtil.isChainValid(blockChain)));
-        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain.getBlockList());
-        System.out.println(String.format(TextConstants.THE_BLOCK_CHAIN,blockchainJson));
 
         executorService.shutdown();
         executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
+        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain.getBlockList());
+        System.out.println(String.format(TextConstants.THE_BLOCK_CHAIN,blockchainJson));
+
         long finish = System.currentTimeMillis();
         System.out.println(String.format(TextConstants.TIME_ELAPSED_TO_END_MINERS,finish - start));
-
+        System.out.println(String.format(TextConstants.BLOCKCHAIN_IS_VALID, SecurityUtil.isChainValid(blockChain)));
     }
 }

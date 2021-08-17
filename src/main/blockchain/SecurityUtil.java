@@ -28,6 +28,7 @@ public class SecurityUtil {
         return result;
     }
 
+    //TODO alterar para stream
     public static Boolean isChainValid(BlockChain bc) {
         List<Block> blockChain = bc.getBlockList();
         Block currentBlock;

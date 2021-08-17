@@ -18,11 +18,12 @@ public class Miner implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < blockNumber; i++) {
-            String blockName = name + new Random().nextInt();
+            String blockName = name +"-" +new Random().nextInt();
             Block block = new Block(blockName, blockChain.getPreviousBlockHash());
 
             System.out.println(String.format(TextConstants.MINER_ADDING_NEW_BLOCK_S,name, block.getData()));
-            blockChain.addBlock(block);
+
+            blockChain.addBlock(block,this);
         }
     }
 
