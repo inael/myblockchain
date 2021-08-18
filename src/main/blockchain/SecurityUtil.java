@@ -2,6 +2,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,11 +31,12 @@ public class SecurityUtil {
 
     //TODO alterar para stream
     public static Boolean isChainValid(BlockChain bc) {
-        List<Block> blockChain = bc.getBlockList();
+        Vector<Block> blockChain = bc.getBlockList();
         Block currentBlock;
         Block previousBlock;
 
         //loop through blockchain to check hashes:
+
         for (int i = 1; i < blockChain.size(); i++) {
             currentBlock = blockChain.get(i);
             previousBlock = blockChain.get(i - 1);

@@ -17,11 +17,18 @@ public class Miner implements Runnable {
 
     @Override
     public void run() {
+        int difficulty = blockChain.getDifficultyMineBlock();
         for (int i = 0; i < blockNumber; i++) {
-            String blockName = name +"-" + UUID.randomUUID().toString().substring(0,4);
-            Block newBlock = new Block(blockName, blockChain.getPreviousBlockHash());
-            newBlock.mineBlock(blockChain.getDifficultyMineBlock());
-            blockChain.addBlock(newBlock,this);
+
+            String blockName = name + "-" + UUID.randomUUID().toString().substring(0, 4);
+            Block lastBlock = blockChain.getLastBlock();
+
+            Block newBlock = new Block(blockName, lastBlock.getHash());
+            System.out.println(String.format(TextConstants.START_MINING, name));
+            newBlock.mineBlock(difficulty);
+            System.out.println(String.format(TextConstants.END_MINING, name));
+            blockChain.addBlock(newBlock, this);
+
         }
     }
 
