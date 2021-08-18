@@ -1,10 +1,11 @@
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 
 /**
@@ -22,6 +23,7 @@ public class BlockChain {
     private int difficultyMineBlock;
 
     public BlockChain(int difficultyMineBlock) {
+
         this.difficultyMineBlock = difficultyMineBlock;
         this.addGenesisBlock();
     }
@@ -46,12 +48,20 @@ public class BlockChain {
     }
 
     public void printReportSumOfBlocksPerMiner() {
-       logger.info("---------------Report Sum Of Blocks Per Miner----------------------");
-        this.reportSumOfBlocksPerMiner.entrySet().forEach(entry ->
-               logger.info(String
+        logger.info("---------------Report Sum Of Blocks Per Miner----------------------");
+
+        List<Map.Entry<String, Integer>> sortedByKey = reportSumOfBlocksPerMiner
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toList());
+
+        sortedByKey.forEach(entry ->
+                logger.info(String
                         .format(TextConstants.SUM_OF_BLOCKS_PER_MINER, entry.getKey(), entry.getValue()))
         );
-       logger.info("-------------------------------------");
+
+        logger.info("-------------------------------------");
     }
 
     public  Vector<Block> getBlockList() {
@@ -105,15 +115,23 @@ public class BlockChain {
                 newBlock.getData()));
     }
 
-    private boolean isValidBlock(Block newBlock, Block lastBlock) {
+    private  boolean isValidBlock(Block newBlock, Block lastBlock) {
         return lastBlock.getHash().equals(newBlock.getPreviousHash()) && newBlock.getHash().equals(newBlock.calculateHash());
     }
 
-    private void updateReport(Miner miner) {
-        Integer blockSum = new Integer(0);
-        if(reportSumOfBlocksPerMiner.containsKey(miner.getName())) {
-            blockSum = this.reportSumOfBlocksPerMiner.get(miner.getName());
-        }
-        this.reportSumOfBlocksPerMiner.put(miner.getName(), new Integer(blockSum + 1));
+    private  void updateReport(Miner miner) {
+        reportSumOfBlocksPerMiner.merge(miner.getName(), 1, (v1, v2) -> v1 + v2);;
+//  ------------------------      Option 1 - JAVA 8-------------------------
+//        reportSumOfBlocksPerMiner.compute(miner.getName(), (k, v) -> (v == null) ? new Integer(1) : v.intValue() + 1);
+//
+//        ------------------------Option 2 - JAVA7------------------------
+//        Integer blockSum = new Integer(0);
+//        if (reportSumOfBlocksPerMiner.containsKey(miner.getName())) {
+//            blockSum = this.reportSumOfBlocksPerMiner.get(miner.getName());
+//        }
+//        this.reportSumOfBlocksPerMiner.put(miner.getName(), new Integer(blockSum + 1));
+//        //------------------------Option 3 - JAVA8------------------------
+//        Integer blockSum = reportSumOfBlocksPerMiner.getOrDefault(miner.getName(), new Integer(0));
+//        this.reportSumOfBlocksPerMiner.put(miner.getName(), new Integer(blockSum.intValue() + 1));
     }
 }

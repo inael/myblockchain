@@ -16,5 +16,5 @@ public class TextConstants {
     public static final String BLOCK_IS_INVALID = "Miner #%s's Block #%s is INVALID!";
     public static final String START_MINING = "Miner #%s starting mining...";
     public static final String END_MINING = "Miner #%s end mining...";;
-    public static final String SUM_OF_BLOCKS_PER_MINER = "Miner #%s added #%s blocks! ";
+    public static final String SUM_OF_BLOCKS_PER_MINER = "Miner #%s added %s blocks! ";
 }
