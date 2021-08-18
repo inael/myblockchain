@@ -41,8 +41,6 @@ public class BlockChain {
             System.out.println(String.format(TextConstants.BLOCK_IS_INVALID, miner.getName(),
                     newBlock.getData()));
         }
-        System.out.println(String.format("Is Valid BlockChain %s", isChainValid()));
-
     }
 
     private void updateReport(Miner miner) {
