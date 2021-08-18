@@ -6,9 +6,11 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 public class Application {
+    public static Logger logger = Logger.getLogger(SecurityUtil.class.getName());
 
 
 
@@ -17,14 +19,14 @@ public class Application {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println(TextConstants.ENTER_THE_NUMBER_OF_THREADS);
+        logger.info(TextConstants.ENTER_THE_NUMBER_OF_THREADS);
         Integer threadNumber = new Integer(sc.next());
 
 
-        System.out.println(TextConstants.ENTER_THE_NUMBER_OF_BLOCKS_PER_MINER);
+        logger.info(TextConstants.ENTER_THE_NUMBER_OF_BLOCKS_PER_MINER);
         Integer blockNumber = new Integer(sc.next());
 
-        System.out.println(TextConstants.ENTER_A_NUMBER_TO_REPRESENT_THE_MINING_DIFFICULTY_EG_1_1000);
+        logger.info(TextConstants.ENTER_A_NUMBER_TO_REPRESENT_THE_MINING_DIFFICULTY_EG_1_1000);
         Integer difficultyMineBlock = new Integer(sc.next());
 
         ExecutorService executorService = Executors.newFixedThreadPool(threadNumber);
@@ -47,11 +49,11 @@ public class Application {
 
 
         String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain.getBlockList());
-      //  System.out.println(String.format(TextConstants.THE_BLOCK_CHAIN,blockchainJson));
+        logger.info(String.format(TextConstants.THE_BLOCK_CHAIN,blockchainJson));
 
         long finish = System.currentTimeMillis();
-        System.out.println(String.format(TextConstants.TIME_ELAPSED_TO_END_MINERS,finish - start));
-        System.out.println(String.format(TextConstants.BLOCKCHAIN_IS_VALID, SecurityUtil.isChainValid(blockChain)));
+        logger.info(String.format(TextConstants.TIME_ELAPSED_TO_END_MINERS,finish - start));
+        logger.info(String.format(TextConstants.BLOCKCHAIN_IS_VALID, blockChain.isChainValid()));
         blockChain.printReportSumOfBlocksPerMiner();
     }
 }

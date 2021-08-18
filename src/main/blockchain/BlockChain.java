@@ -1,19 +1,21 @@
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class BlockChain {
 
-    /**
-     * It will be necessary to increase the amount of elements very often, so the ideal is to use the Vector that
-     * increases twice and will have much more space than the Synchronized ArrayList (Collections.synchronizedList
-     * (new ArrayList<>())) that will need to be increasing more often,
-     * thus decreasing the application's performance.
-     */
+/**
+ * It will be necessary to increase the amount of elements very often, so the ideal is to use the Vector that
+ * increases twice and will have much more space than the Synchronized ArrayList (Collections.synchronizedList
+ * (new ArrayList<>())) that will need to be increasing more often,
+ * thus decreasing the application's performance.
+ */
+@Getter
+public class BlockChain {
 
     private Vector<Block> blockList = new Vector<>();
     Map<String, Integer> reportSumOfBlocksPerMiner = new HashMap<String, Integer>();
-
 
     private int difficultyMineBlock;
 
@@ -60,7 +62,7 @@ public class BlockChain {
         System.out.println("-------------------------------------");
     }
 
-    public synchronized Vector<Block> getBlockList() {
+    public  Vector<Block> getBlockList() {
         return blockList;
     }
 
@@ -72,7 +74,6 @@ public class BlockChain {
     public int getDifficultyMineBlock() {
         return this.difficultyMineBlock;
     }
-
 
     public Boolean isChainValid() {
         synchronized (this) {

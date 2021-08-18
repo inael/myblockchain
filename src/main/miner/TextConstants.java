@@ -10,7 +10,7 @@ public class TextConstants {
             "represent the mining difficulty (eg 1...1000) ";
     public static final String BLOCKCHAIN_IS_VALID = "Is valid Blockchain: %s\n";
     public static final String TIME_ELAPSED_TO_END_MINERS = "Time elapsed to end miners: %s\n";
-
+    public static final String THE_BLOCK_CHAIN = "The block chain: \n%s";
     public static final String MINER_ADICIONOU_O_BLOCK = "Miner #%s added the Block #%s";
 
     public static final String BLOCK_IS_INVALID = "Miner #%s's Block #%s is INVALID!";

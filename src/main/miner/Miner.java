@@ -1,13 +1,15 @@
 import lombok.Getter;
 
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @Getter
 public class Miner implements Runnable {
+    public static Logger logger = Logger.getLogger(SecurityUtil.class.getName());
 
-    String name;
-    BlockChain blockChain;
-    Integer blockNumber;
+    private String name;
+    private BlockChain blockChain;
+    private Integer blockNumber;
 
     public Miner(int id, BlockChain blockChain, Integer blockNumber) {
         this.name = new Integer(id).toString();
@@ -24,9 +26,9 @@ public class Miner implements Runnable {
             Block lastBlock = blockChain.getLastBlock();
 
             Block newBlock = new Block(blockName, lastBlock.getHash());
-            System.out.println(String.format(TextConstants.START_MINING, name));
+            logger.info(String.format(TextConstants.START_MINING, name));
             newBlock.mineBlock(difficulty);
-            System.out.println(String.format(TextConstants.END_MINING, name));
+            logger.info(String.format(TextConstants.END_MINING, name));
             blockChain.addBlock(newBlock, this);
 
         }

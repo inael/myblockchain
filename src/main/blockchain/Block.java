@@ -12,7 +12,7 @@ public class Block {
     private String hash;
     private String data;
     private long timeStamp;
-    private int nounce;
+    private int nonce;
 
     public Block(String data, String previousHash) {
         this.data = data;
@@ -24,7 +24,7 @@ public class Block {
         String completeData  = new StringBuilder()
                 .append(previousHash)
                 .append(timeStamp)
-                .append(nounce)
+                .append(nonce)
                 .append(data).toString();
         return SecurityUtil.applySha256(completeData);
     }
@@ -38,16 +38,10 @@ public class Block {
 
         String prefixString = new String(new char[difficulty]).replace('\0', '0');
         while (!hash.substring(0, difficulty).equals(prefixString)) {
-            nounce++;
+            nonce++;
             hash = calculateHash();
         }
         return hash;
     }
-
-    public String toString() {
-        return ("Block #" + data + "\n\tmined at: " + this.timeStamp + "\n\tHash: {"
-                + this.hash + "}\n");
-    }
-
 
 }
