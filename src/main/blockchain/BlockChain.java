@@ -3,6 +3,8 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 
 /**
@@ -13,7 +15,7 @@ import java.util.Vector;
  */
 @Getter
 public class BlockChain {
-
+    private static Logger logger = Logger.getLogger(SecurityUtil.class.getName());
     private Vector<Block> blockList = new Vector<>();
     Map<String, Integer> reportSumOfBlocksPerMiner = new HashMap<String, Integer>();
 
@@ -21,45 +23,35 @@ public class BlockChain {
 
     public BlockChain(int difficultyMineBlock) {
         this.difficultyMineBlock = difficultyMineBlock;
+        this.addGenesisBlock();
     }
 
     public synchronized void addBlock(Block newBlock, Miner miner) {
 
         Block lastBlock = blockList.get(blockList.size() - 1);
 
-        System.out.println(String.format(TextConstants.MINER_TRYING_ADD_NEW_BLOCK, miner.getName(),
-                newBlock.getData()));
+        print(newBlock, miner, TextConstants.MINER_TRYING_ADD_NEW_BLOCK);
 
-        if (lastBlock.getHash().equals(newBlock.getPreviousHash()) && newBlock.getHash().equals(newBlock.calculateHash())) {
-            System.out.println(String.format(TextConstants.MINER_ADDING_NEW_BLOCK_S, miner.getName(),
-                    newBlock.getData()));
+        if (isValidBlock(newBlock, lastBlock)) {
+            print(newBlock, miner, TextConstants.MINER_ADDING_NEW_BLOCK_S);
 
             blockList.add(newBlock);
+
             updateReport(miner);
 
-            System.out.println(String.format(TextConstants.MINER_ADICIONOU_O_BLOCK, miner.getName(),
-                    newBlock.getData()));
+            print(newBlock, miner, TextConstants.MINER_ADICIONOU_O_BLOCK);
         } else {
-            System.out.println(String.format(TextConstants.BLOCK_IS_INVALID, miner.getName(),
-                    newBlock.getData()));
+            print(newBlock, miner, TextConstants.BLOCK_IS_INVALID);
         }
-    }
-
-    private void updateReport(Miner miner) {
-        Integer blockSum = new Integer(0);
-        if(reportSumOfBlocksPerMiner.containsKey(miner.getName())) {
-             blockSum = this.reportSumOfBlocksPerMiner.get(miner.getName());
-        }
-        this.reportSumOfBlocksPerMiner.put(miner.getName(), new Integer(blockSum + 1));
     }
 
     public void printReportSumOfBlocksPerMiner() {
-        System.out.println("---------------Report Sum Of Blocks Per Miner----------------------");
+       logger.info("---------------Report Sum Of Blocks Per Miner----------------------");
         this.reportSumOfBlocksPerMiner.entrySet().forEach(entry ->
-                System.out.println(String
+               logger.info(String
                         .format(TextConstants.SUM_OF_BLOCKS_PER_MINER, entry.getKey(), entry.getValue()))
         );
-        System.out.println("-------------------------------------");
+       logger.info("-------------------------------------");
     }
 
     public  Vector<Block> getBlockList() {
@@ -77,27 +69,25 @@ public class BlockChain {
 
     public Boolean isChainValid() {
         synchronized (this) {
-            Block currentBlock;
-            Block previousBlock;
             String hashTarget = new String(new char[difficultyMineBlock]).replace('\0', '0');
 
             //loop through blockchain to check hashes:
             for (int i = 1; i < blockList.size(); i++) {
-                currentBlock = blockList.get(i);
-                previousBlock = blockList.get(i - 1);
+               Block currentBlock = blockList.get(i);
+                Block previousBlock = blockList.get(i - 1);
                 //compare registered hash and calculated hash:
                 if (!currentBlock.getHash().equals(currentBlock.calculateHash())) {
-                    System.out.println("Current Hashes not equal");
+                   logger.info("Current Hashes not equal");
                     return false;
                 }
                 //compare previous hash and registered previous hash
                 if (!previousBlock.getHash().equals(currentBlock.getPreviousHash())) {
-                    System.out.println("Previous Hashes not equal");
+                   logger.info("Previous Hashes not equal");
                     return false;
                 }
                 //check if hash is solved
                 if (!currentBlock.getHash().substring(0, difficultyMineBlock).equals(hashTarget)) {
-                    System.out.println("This block hasn't been mined");
+                   logger.info("This block hasn't been mined");
                     return false;
                 }
             }
@@ -108,5 +98,22 @@ public class BlockChain {
     public Block getLastBlock() {
         int lastBlockIndex = blockList.size() - 1;
         return blockList.get(lastBlockIndex);
+    }
+
+    private void print(Block newBlock, Miner miner, String minerAddingNewBlockS) {
+        logger.info(String.format(minerAddingNewBlockS, miner.getName(),
+                newBlock.getData()));
+    }
+
+    private boolean isValidBlock(Block newBlock, Block lastBlock) {
+        return lastBlock.getHash().equals(newBlock.getPreviousHash()) && newBlock.getHash().equals(newBlock.calculateHash());
+    }
+
+    private void updateReport(Miner miner) {
+        Integer blockSum = new Integer(0);
+        if(reportSumOfBlocksPerMiner.containsKey(miner.getName())) {
+            blockSum = this.reportSumOfBlocksPerMiner.get(miner.getName());
+        }
+        this.reportSumOfBlocksPerMiner.put(miner.getName(), new Integer(blockSum + 1));
     }
 }

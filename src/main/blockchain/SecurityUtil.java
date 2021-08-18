@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 
 public class SecurityUtil {
-    public static Logger logger = Logger.getLogger(SecurityUtil.class.getName());
+    private static Logger logger = Logger.getLogger(SecurityUtil.class.getName());
 
     public static String applySha256(String dataToHash) {
 

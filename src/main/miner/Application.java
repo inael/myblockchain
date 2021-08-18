@@ -1,7 +1,5 @@
 import com.google.gson.GsonBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,18 +31,12 @@ public class Application {
 
         BlockChain blockChain = new BlockChain(difficultyMineBlock);
 
-        blockChain.addGenesisBlock();
-
-
-
         long start = System.currentTimeMillis();
 
-        IntStream.range(0, threadNumber).forEach(i -> {
-            Miner miner = new Miner(i, blockChain, blockNumber);
-            executorService.submit(miner);
-        });
+        createRunMiners(threadNumber, blockNumber, executorService, blockChain);
 
         executorService.shutdown();
+
         executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
 
@@ -55,5 +47,13 @@ public class Application {
         logger.info(String.format(TextConstants.TIME_ELAPSED_TO_END_MINERS,finish - start));
         logger.info(String.format(TextConstants.BLOCKCHAIN_IS_VALID, blockChain.isChainValid()));
         blockChain.printReportSumOfBlocksPerMiner();
+    }
+
+    private static void createRunMiners(Integer threadNumber, Integer blockNumber, ExecutorService executorService,
+                                        BlockChain blockChain) {
+        IntStream.range(0, threadNumber).forEach(i -> {
+            Miner miner = new Miner(i, blockChain, blockNumber);
+            executorService.submit(miner);
+        });
     }
 }
